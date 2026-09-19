@@ -37,13 +37,46 @@ const STORAGE_KEYS = {
   CHATS: 'KABUR_CHATS_DATA',
 };
 
+// Immediate purge of all legacy dummy data and stock pictures for clean production deployment
+if (typeof window !== 'undefined') {
+  const PURGE_FLAG = 'KABUR_CLEAN_PRODUCTION_V3';
+  if (!localStorage.getItem(PURGE_FLAG)) {
+    localStorage.removeItem(STORAGE_KEYS.POSTS);
+    localStorage.removeItem(STORAGE_KEYS.REELS);
+    localStorage.removeItem(STORAGE_KEYS.NEWS);
+    localStorage.removeItem(STORAGE_KEYS.CHATS);
+
+    const savedUser = localStorage.getItem(STORAGE_KEYS.USER);
+    if (savedUser) {
+      try {
+        const u = JSON.parse(savedUser);
+        if (
+          !u.name ||
+          u.name === 'Ram Mahesh' ||
+          (u.avatar && u.avatar.includes('unsplash.com')) ||
+          (u.coverImage && u.coverImage.includes('unsplash.com'))
+        ) {
+          localStorage.removeItem(STORAGE_KEYS.USER);
+        }
+      } catch {
+        localStorage.removeItem(STORAGE_KEYS.USER);
+      }
+    }
+    localStorage.setItem(PURGE_FLAG, 'true');
+  }
+}
+
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.USER);
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const u: User = JSON.parse(saved);
+        if (!u.name || u.name === 'Ram Mahesh') return null;
+        if (u.avatar && u.avatar.includes('unsplash.com')) u.avatar = '';
+        if (u.coverImage && u.coverImage.includes('unsplash.com')) u.coverImage = '';
+        return u;
       } catch {
         return null;
       }
@@ -56,14 +89,19 @@ export default function App() {
     if (saved) {
       try {
         const parsed: Post[] = JSON.parse(saved);
-        // Clean out legacy initial dummy demo posts if present
-        const filtered = parsed.filter((p) => p.id !== 1 && p.id !== 2 && p.id !== 3);
-        return filtered;
+        return parsed.filter(
+          (p) =>
+            p.id !== 1 &&
+            p.id !== 2 &&
+            p.id !== 3 &&
+            !(p.img && p.img.includes('unsplash.com')) &&
+            !(p.avatar && p.avatar.includes('unsplash.com'))
+        );
       } catch {
-        return INITIAL_POSTS;
+        return [];
       }
     }
-    return INITIAL_POSTS;
+    return [];
   });
 
   const [reels, setReels] = useState<Reel[]>(() => {
@@ -71,14 +109,18 @@ export default function App() {
     if (saved) {
       try {
         const parsed: Reel[] = JSON.parse(saved);
-        // Clean out legacy initial dummy demo reels if present
-        const filtered = parsed.filter((r) => r.id !== 11 && r.id !== 12 && r.id !== 13);
-        return filtered;
+        return parsed.filter(
+          (r) =>
+            r.id !== 11 &&
+            r.id !== 12 &&
+            r.id !== 13 &&
+            !(r.avatar && r.avatar.includes('unsplash.com'))
+        );
       } catch {
-        return INITIAL_REELS;
+        return [];
       }
     }
-    return INITIAL_REELS;
+    return [];
   });
 
   const [news, setNews] = useState<NewsItem[]>(() => {
@@ -86,14 +128,19 @@ export default function App() {
     if (saved) {
       try {
         const parsed: NewsItem[] = JSON.parse(saved);
-        // Clean out legacy initial dummy demo news if present
-        const filtered = parsed.filter((n) => n.id !== 21 && n.id !== 22 && n.id !== 23 && n.id !== 24);
-        return filtered;
+        return parsed.filter(
+          (n) =>
+            n.id !== 21 &&
+            n.id !== 22 &&
+            n.id !== 23 &&
+            n.id !== 24 &&
+            !(n.img && n.img.includes('unsplash.com'))
+        );
       } catch {
-        return INITIAL_NEWS;
+        return [];
       }
     }
-    return INITIAL_NEWS;
+    return [];
   });
 
   const [chats, setChats] = useState<Record<string, ChatConversation>>(() => {
@@ -101,19 +148,23 @@ export default function App() {
     if (saved) {
       try {
         const parsed: Record<string, ChatConversation> = JSON.parse(saved);
-        // Clean out legacy dummy conversation keys if present
         const cleaned: Record<string, ChatConversation> = {};
         for (const [key, conv] of Object.entries(parsed)) {
-          if (conv.id !== 'chat-sneha' && conv.id !== 'chat-arjun' && conv.id !== 'chat-kavya') {
+          if (
+            conv.id !== 'chat-sneha' &&
+            conv.id !== 'chat-arjun' &&
+            conv.id !== 'chat-kavya' &&
+            !(conv.avatar && conv.avatar.includes('unsplash.com'))
+          ) {
             cleaned[key] = conv;
           }
         }
         return cleaned;
       } catch {
-        return INITIAL_CHATS;
+        return {};
       }
     }
-    return INITIAL_CHATS;
+    return {};
   });
 
   const [currentChatKey, setCurrentChatKey] = useState<string>('');
@@ -482,9 +533,7 @@ export default function App() {
       category: newNewsData.category || 'Technology',
       author: currentUser?.name || 'Community Editor',
       time: 'Just now',
-      img:
-        newNewsData.img ||
-        'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80',
+      img: newNewsData.img || '',
       saved: false,
       likes: 0,
     };

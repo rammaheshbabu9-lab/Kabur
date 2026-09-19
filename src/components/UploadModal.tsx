@@ -32,18 +32,6 @@ export const UploadModal: React.FC<UploadModalProps> = ({
 
   if (!isOpen) return null;
 
-  // Preset sample image options for convenience
-  const samplePhotos = [
-    'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1000&q=80',
-    'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1000&q=80',
-    'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1000&q=80',
-  ];
-
-  const sampleVideos = [
-    { label: 'Bloom', url: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4' },
-    { label: 'Creative', url: 'https://www.w3schools.com/html/mov_bbb.mp4' },
-  ];
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -75,15 +63,15 @@ export const UploadModal: React.FC<UploadModalProps> = ({
       });
       showToast('Post published to KABUR!');
     } else if (activeType === 'reel') {
-      if (!caption.trim() && !mediaPreview) {
-        showToast('Please choose a video or add caption');
+      if (!mediaPreview) {
+        showToast('Please upload a video for your reel');
         return;
       }
       onPublishReel({
         user: currentUser.name,
         avatar: currentUser.avatar,
         caption: caption.trim() || 'New Reel ✨',
-        video: mediaPreview || sampleVideos[0].url,
+        video: mediaPreview,
         likes: 0,
         liked: false,
         commentsCount: 0,
@@ -101,9 +89,7 @@ export const UploadModal: React.FC<UploadModalProps> = ({
         category: newsCategory,
         author: currentUser.name,
         time: 'Just now',
-        img:
-          mediaPreview ||
-          'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80',
+        img: mediaPreview || '',
       });
       showToast('Community news submitted!');
     }
@@ -264,42 +250,6 @@ export const UploadModal: React.FC<UploadModalProps> = ({
                   onChange={handleFileChange}
                   className="hidden"
                 />
-              </div>
-            )}
-
-            {/* Quick sample pickers */}
-            {!mediaPreview && (
-              <div className="mt-2.5">
-                <span className="text-[11px] font-semibold text-[#718991] block mb-1">
-                  Or pick a sample:
-                </span>
-                {activeType === 'reel' ? (
-                  <div className="flex gap-2">
-                    {sampleVideos.map((v, i) => (
-                      <button
-                        key={i}
-                        type="button"
-                        onClick={() => setMediaPreview(v.url)}
-                        className="px-2.5 py-1 text-[11px] bg-white border border-[#dcebea] rounded-lg text-[#078da3] font-bold hover:bg-[#eaf7f6]"
-                      >
-                        {v.label} Video
-                      </button>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="flex gap-2">
-                    {samplePhotos.map((url, i) => (
-                      <button
-                        key={i}
-                        type="button"
-                        onClick={() => setMediaPreview(url)}
-                        className="w-12 h-12 rounded-xl overflow-hidden border border-[#dcebea] hover:ring-2 hover:ring-[#078da3] transition shrink-0"
-                      >
-                        <img src={url} alt="Preset" className="w-full h-full object-cover" />
-                      </button>
-                    ))}
-                  </div>
-                )}
               </div>
             )}
           </div>

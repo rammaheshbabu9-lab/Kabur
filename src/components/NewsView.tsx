@@ -92,17 +92,19 @@ export const NewsView: React.FC<NewsViewProps> = ({
               className="bg-[#fffef9] border border-[#dcebea] rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition group"
             >
               {/* News Media */}
-              <div
-                onClick={() => setReadingItem(item)}
-                className="cursor-pointer overflow-hidden aspect-video sm:h-56 w-full bg-black/5"
-              >
-                <img
-                  src={item.img}
-                  alt={item.title}
-                  className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
-                  loading="lazy"
-                />
-              </div>
+              {item.img && (
+                <div
+                  onClick={() => setReadingItem(item)}
+                  className="cursor-pointer overflow-hidden aspect-video sm:h-56 w-full bg-black/5"
+                >
+                  <img
+                    src={item.img}
+                    alt={item.title}
+                    className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
+                    loading="lazy"
+                  />
+                </div>
+              )}
 
               <div className="p-4 sm:p-5">
                 <div className="flex items-center justify-between gap-2 mb-2">
@@ -191,11 +193,13 @@ export const NewsView: React.FC<NewsViewProps> = ({
               <span>{readingItem.time}</span>
             </div>
 
-            <img
-              src={readingItem.img}
-              alt={readingItem.title}
-              className="w-full max-h-80 object-cover rounded-xl mb-4"
-            />
+            {readingItem.img && (
+              <img
+                src={readingItem.img}
+                alt={readingItem.title}
+                className="w-full max-h-80 object-cover rounded-xl mb-4"
+              />
+            )}
 
             <div className="text-sm text-[#163b49] leading-relaxed space-y-3">
               <p>{readingItem.desc}</p>

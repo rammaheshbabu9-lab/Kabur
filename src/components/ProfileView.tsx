@@ -37,22 +37,6 @@ interface ProfileViewProps {
   onDeleteReel?: (id: number) => void;
 }
 
-const PRESET_AVATARS = [
-  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200&auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=200&auto=format&fit=crop&q=80',
-];
-
-const PRESET_COVERS = [
-  'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=1000&auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1000&auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1000&auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=1000&auto=format&fit=crop&q=80',
-];
-
 export const ProfileView: React.FC<ProfileViewProps> = ({
   currentUser,
   posts,
@@ -632,84 +616,56 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                           onClick={() => setEditAvatar('')}
                           className="px-2.5 py-1.5 text-xs text-[#e84d5b] hover:bg-red-50 rounded-xl transition font-medium"
                         >
-                          Remove
+                          Remove Photo
                         </button>
                       )}
                     </div>
                     <p className="text-[11px] text-[#718991]">
-                      Or pick from quick preset avatars:
+                      Upload your profile picture (PNG, JPG, WebP) or remove to use your initials.
                     </p>
                   </div>
-                </div>
-
-                {/* Preset Avatars Row */}
-                <div className="flex items-center gap-2 pt-1 overflow-x-auto pb-1">
-                  {PRESET_AVATARS.map((presetUrl, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => setEditAvatar(presetUrl)}
-                      className={`relative w-9 h-9 rounded-full overflow-hidden border-2 transition shrink-0 ${
-                        editAvatar === presetUrl
-                          ? 'border-[#078da3] ring-2 ring-[#078da3]/40'
-                          : 'border-transparent hover:opacity-80'
-                      }`}
-                    >
-                      <img
-                        src={presetUrl}
-                        alt={`Preset ${idx}`}
-                        className="w-full h-full object-cover"
-                      />
-                    </button>
-                  ))}
                 </div>
               </div>
 
               {/* Cover Banner Selector Section */}
               <div className="p-3.5 bg-[#f8fcfc] border border-[#e2eff0] rounded-2xl space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-[#163b49]">
-                    Cover Banner Photo
-                  </label>
-                  <input
-                    type="file"
-                    ref={modalCoverInputRef}
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) =>
-                      handleFileChange(e, (dataUrl) => setEditCover(dataUrl))
-                    }
-                  />
-                  <button
-                    type="button"
-                    onClick={() => modalCoverInputRef.current?.click()}
-                    className="text-xs text-[#078da3] hover:underline font-bold flex items-center gap-1"
-                  >
-                    <Image className="w-3.5 h-3.5" />
-                    <span>Upload Cover</span>
-                  </button>
-                </div>
-
-                {/* Cover Presets */}
-                <div className="grid grid-cols-4 gap-2">
-                  {PRESET_COVERS.map((cov, idx) => (
+                  <div>
+                    <label className="text-xs font-bold text-[#163b49] block">
+                      Cover Banner Photo
+                    </label>
+                    <p className="text-[11px] text-[#718991]">
+                      Upload a custom banner image or use default gradient
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="file"
+                      ref={modalCoverInputRef}
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) =>
+                        handleFileChange(e, (dataUrl) => setEditCover(dataUrl))
+                      }
+                    />
                     <button
-                      key={idx}
                       type="button"
-                      onClick={() => setEditCover(cov)}
-                      className={`h-12 rounded-xl overflow-hidden border-2 transition ${
-                        editCover === cov
-                          ? 'border-[#078da3] ring-2 ring-[#078da3]/40'
-                          : 'border-transparent hover:opacity-90'
-                      }`}
+                      onClick={() => modalCoverInputRef.current?.click()}
+                      className="px-3 py-1.5 bg-[#078da3] hover:bg-[#066f80] text-white text-xs font-bold rounded-xl transition flex items-center gap-1.5 shadow-xs"
                     >
-                      <img
-                        src={cov}
-                        alt={`Cover preset ${idx}`}
-                        className="w-full h-full object-cover"
-                      />
+                      <Image className="w-3.5 h-3.5" />
+                      <span>Upload Cover</span>
                     </button>
-                  ))}
+                    {editCover && (
+                      <button
+                        type="button"
+                        onClick={() => setEditCover('')}
+                        className="px-2.5 py-1.5 text-xs text-[#e84d5b] hover:bg-red-50 rounded-xl transition font-medium"
+                      >
+                        Reset
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
 
