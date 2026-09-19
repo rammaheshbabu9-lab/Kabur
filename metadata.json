@@ -1,0 +1,7 @@
+{
+  "name": "KABUR",
+  "description": "Share, connect, and grow with KABUR — the community social platform for posts, short reels, news updates, and real-time chat.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
